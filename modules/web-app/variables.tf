@@ -32,3 +32,15 @@ variable "health_check_path" {
   type        = string
   default     = "/"
 }
+
+variable "user_data" {
+  description = "Shell script to run on instance launch. Installs and starts the application."
+  type        = string
+  sensitive   = true
+}
+
+variable "health_check_grace_period" {
+  description = "Seconds the ASG waits before checking health on a new instance. Set high enough to cover your startup script."
+  type        = number
+  default     = 300
+}

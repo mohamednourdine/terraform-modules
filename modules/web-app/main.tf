@@ -48,15 +48,8 @@ resource "aws_launch_template" "web" {
 
   vpc_security_group_ids = [aws_security_group.instance.id]
 
-  # base64encode() is required for aws_launch_template —
-  # unlike the deprecated aws_launch_configuration, it does not encode automatically
-  user_data = base64encode(<<-EOF
-    #!/bin/bash
-    mkdir -p /var/www/html
-    echo "Hello from ${var.environment}" > /var/www/html/index.html
-    cd /var/www/html && nohup python3 -m http.server ${var.server_port} &
-  EOF
-  )
+  # Caller provides the script — module doesn't care what app runs
+  user_data = base64encode(var.user_data)
 
   lifecycle {
     create_before_destroy = true
@@ -121,9 +114,10 @@ resource "aws_lb_listener" "http" {
 }
 
 resource "aws_autoscaling_group" "web" {
-  min_size         = var.min_size
-  max_size         = var.max_size
-  desired_capacity = var.min_size
+  min_size                  = var.min_size
+  max_size                  = var.max_size
+  desired_capacity          = var.min_size
+  health_check_grace_period = var.health_check_grace_period
 
   launch_template {
     id      = aws_launch_template.web.id
