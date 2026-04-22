@@ -44,3 +44,15 @@ variable "health_check_grace_period" {
   type        = number
   default     = 300
 }
+
+variable "min_healthy_percentage" {
+  description = "Minimum percentage of healthy instances during a rolling update."
+  type        = number
+  default     = 50
+}
+
+variable "instance_warmup" {
+  description = "Seconds to wait after an instance passes health checks before replacing the next one."
+  type        = number
+  default     = 120
+}

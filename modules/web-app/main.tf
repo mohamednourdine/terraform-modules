@@ -142,6 +142,19 @@ resource "aws_autoscaling_group" "web" {
   target_group_arns   = [aws_lb_target_group.web.arn]
   health_check_type   = "ELB"
 
+  instance_refresh {
+    strategy = "Rolling"
+    preferences {
+      min_healthy_percentage = var.min_healthy_percentage
+      instance_warmup        = var.instance_warmup
+    }
+    triggers = ["launch_template"]
+  }
+
+  lifecycle {
+    ignore_changes = [desired_capacity]
+  }
+
   tag {
     key                 = "Name"
     value               = "${local.name_prefix}-web"
